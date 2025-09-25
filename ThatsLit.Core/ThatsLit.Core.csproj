@@ -7,96 +7,74 @@
     <Version>1.3100.0</Version>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>   
   </PropertyGroup>
-<!-- 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <Optimize>False</Optimize>
-  </PropertyGroup> -->
-
-  <PropertyGroup>
-    <!-- folder switch -->
-    <EFTPath>..\..\..</EFTPath>
-    <ManagedAssembliesPath>$(EFTPath)\EscapeFromTarkov_Data\Managed</ManagedAssembliesPath>
-    <BepInExPath>$(EFTPath)\BepInEx\core</BepInExPath>
-    <PluginsPath>$(EFTPath)\BepInEx\plugins</PluginsPath>
-    <AssemblySearchPaths>$(BepInExPath);$(ManagedAssembliesPath);$(PluginsPath)\spt;</AssemblySearchPaths>
-  </PropertyGroup>
 
   <ItemGroup>
     <Reference Include="BepInEx">
-      <HintPath>$(BepInExPath)\BepInEx.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="0Harmony">
-      <HintPath>$(BepInExPath)\0Harmony.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Sirenix.Serialization">
-      <HintPath>$(ManagedAssembliesPath)\Sirenix.Serialization.dll</HintPath>
+      <HintPath>D:\ref\Sirenix.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="spt-core">
-      <HintPath>$(PluginsPath)\spt\spt-core.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\spt-core.dll</HintPath>
     </Reference>
     <Reference Include="spt-reflection">
-      <HintPath>$(PluginsPath)\spt\spt-reflection.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\spt-reflection.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>$(ManagedAssembliesPath)\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="DissonanceVoip">
-      <HintPath>$(ManagedAssembliesPath)\DissonanceVoip.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\DissonanceVoip.dll</HintPath>
     </Reference>
     <Reference Include="Comfort">
-      <Private>False</Private>
-      <HintPath>$(ManagedAssembliesPath)\Comfort.dll</HintPath>
+      <HintPath>D:\ref\Comfort.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>$(ManagedAssembliesPath)\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>$(ManagedAssembliesPath)\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>$(ManagedAssembliesPath)\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>$(ManagedAssembliesPath)\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>$(ManagedAssembliesPath)\UnityEngine.AudioModule.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\UnityEngine.AudioModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>$(ManagedAssembliesPath)\Unity.TextMeshPro.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AudioModule">
-      <HintPath>$(ManagedAssembliesPath)\Sirenix.Serialization.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\Sirenix.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule.dll">
-      <HintPath>$(ManagedAssembliesPath)\UnityEngine.InputLegacyModule.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
-    <Reference Include="ItemComponent.Types" />
-    <Reference Include="UnityEngine.JSONSerializeModule" />
-    <Reference Include="UnityEngine.IMGUIModule" />
+    <Reference Include="ItemComponent.Types">
+      <HintPath>D:\ref\ItemComponent.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.JSONSerializeModule">
+      <HintPath>D:\ref\UnityEngine.JSONSerializeModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>D:\ref\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule.dll">
-      <HintPath>$(ManagedAssembliesPath)\UnityEngine.PhysicsModule.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TerrainModule.dll">
-      <HintPath>$(ManagedAssembliesPath)\UnityEngine.TerrainModule.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>D:\ref\UnityEngine.TerrainModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.TextRenderingModule" />
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>D:\ref\UnityEngine.TextRenderingModule.dll</HintPath>    
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

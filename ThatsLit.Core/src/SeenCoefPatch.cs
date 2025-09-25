@@ -18,12 +18,12 @@ namespace ThatsLit
 
         protected override MethodBase GetTargetMethod()
         {
-            return ReflectionHelper.FindMethodByArgTypes(typeof(EnemyInfo), new Type[] { typeof(BifacialTransform), typeof(BifacialTransform), typeof(BotDifficultySettingsClass), typeof(IAIData), typeof(float), typeof(Vector3) }); ;
+            return AccessTools.Method(typeof(EnemyInfo), nameof(EnemyInfo.method_7));
         }
 
         [PatchPostfix]
         [HarmonyAfter("me.sol.sain")]
-        public static void PatchPostfix(EnemyInfo __instance, BifacialTransform BotTransform, BifacialTransform enemy, float personalLastSeenTime, Vector3 personalLastSeenPos, ref float __result)
+        public static void PatchPostfix(EnemyInfo __instance, BotDifficultySettingsClass settings, float personalLastSeenTime, Vector3 personalLastSeenPos, float distanceToEnemyNormalized, ref float __result)
         {
             // Don't use GoalEnemy here because it only change when engaging new enemy (it'll stay indifinitely if not engaged with new enemy)
             // Also they could search without having visual?
@@ -456,10 +456,12 @@ namespace ThatsLit
 #endif
                         xyFacingFactor = 1f - xyFacingFactor; // 0 ~ 1
 
-                        // Calculate how flat it is in the vision
-                        var normal = Vector3.Cross(BotTransform.up, -playerLegToBotEye);
-                        var playerLegToHeadAlongVision = Vector3.ProjectOnPlane(playerLegToHead, normal);
-                        layingVerticaltInVisionFactor = Vector3.SignedAngle(playerLegToBotEye, playerLegToHeadAlongVision, normal); // When the angle is 90, it means the player looks straight up in the vision, vice versa for -90.
+                        // Compute angle-based vision factor using method_11
+                        float layingVerticalInVisionFactor = __instance.method_11(
+                            settings,
+                            distanceToEnemyNormalized,
+                            out float angleToEnemy
+                        ); // When the angle is 90, it means the player looks straight up in the vision, vice versa for -90.
 #if DEBUG_DETAILS
                         if (player.DebugInfo != null && nearestAI)
                         {
@@ -1033,7 +1035,6 @@ namespace ThatsLit
                 player.DebugInfo.calcedLastFrame++;
             }
             
-
             ThatsLitPlugin.swSeenCoef.Stop();
 
             bool ShouldLogSeenCoef()
@@ -1047,16 +1048,16 @@ namespace ThatsLit
 
 
         static readonly float[][] focusLUTs = new float[][] {
-            new float[] { -27f, -9f, 6f, -42f, 24f, -87f, -12f, 3f, 33f, 30f, 51f, -66f, 12f, -90f, 72f, 87f, -54f, 42f, -15f, -33f, 18f, -30f, 90f, -81f, -3f, -57f, 36f, -45f, 48f, 69f, -51f, 27f, 0f, -6f, -36f, 81f, -84f, 54f, -78f, 84f, -63f, 39f, 60f, -21f, 9f, 57f, 21f, -69f, -75f, -24f, -18f, -39f, 78f, 45f, 15f, 75f, -60f, -48f, 63f, 66f, -72f, },
-            new float[] { 9f, -87f, 42f, -63f, -54f, -84f, 0f, -39f, -36f, 54f, -69f, -66f, -27f, -33f, -51f, -60f, -90f, -9f, -15f, 75f, -75f, -12f, 66f, -78f, 60f, -6f, -45f, 69f, -3f, 24f, -81f, 63f, 15f, 84f, 27f, 21f, 72f, 81f, 45f, 30f, -57f, -18f, -72f, 87f, 90f, -21f, -30f, 57f, -42f, 18f, 78f, 39f, -48f, 3f, 48f, 33f, -24f, 6f, 36f, 12f, 51f, },
-            new float[] { 54f, 3f, 6f, -21f, 30f, -75f, -48f, -12f, -81f, -54f, -15f, -9f, -39f, -45f, 18f, 69f, -78f, 9f, -33f, -51f, -69f, -24f, 72f, 33f, -84f, 66f, 21f, 0f, -3f, 36f, 90f, 39f, -63f, 81f, -72f, 84f, -36f, -42f, 63f, 15f, 24f, -57f, -30f, 12f, 48f, 60f, 57f, -87f, 27f, -90f, 51f, -6f, 45f, -66f, 78f, 75f, -60f, -18f, 87f, 42f, -27f, },
-            new float[] { 39f, 51f, -84f, 12f, 9f, -42f, 42f, 30f, -81f, 27f, -51f, 69f, -78f, 78f, -21f, 24f, 15f, -9f, -27f, 63f, -60f, 72f, -48f, -57f, 48f, -75f, 36f, 66f, -33f, -66f, 57f, 6f, 21f, -36f, 81f, 90f, -30f, -39f, -45f, 3f, 84f, -24f, -6f, 60f, 45f, 87f, -72f, -90f, -54f, 18f, -15f, -87f, 0f, 33f, 75f, -63f, 54f, -18f, -3f, -12f, -69f, },
-            new float[] { -51f, -63f, 48f, 18f, 9f, -54f, 33f, -60f, -3f, 36f, 30f, 51f, -33f, 21f, 12f, -45f, 0f, 57f, -24f, -21f, -87f, -69f, -36f, 69f, -81f, 3f, -30f, 27f, -72f, 60f, 81f, 78f, 75f, -6f, 45f, -42f, 42f, 54f, 63f, 84f, 90f, -27f, -66f, -48f, -78f, -15f, -75f, 15f, -57f, 87f, -90f, -12f, 6f, 72f, -84f, -18f, -9f, -39f, 66f, 24f, 39f, },
-            new float[] { 21f, 84f, 9f, 60f, 78f, 45f, -57f, -81f, 57f, -3f, 3f, 0f, -42f, -75f, -24f, -39f, -36f, -9f, 30f, 75f, 63f, 66f, 48f, 18f, -72f, 87f, -54f, 51f, -51f, 15f, 39f, 36f, -66f, -78f, -12f, 69f, 42f, -15f, -48f, 27f, -30f, 6f, 90f, -90f, 24f, 33f, 12f, 81f, -63f, -21f, -87f, -45f, -84f, -27f, -18f, -60f, 72f, -6f, -69f, 54f, -33f, },
-            new float[] { -42f, -45f, -24f, -90f, -87f, 33f, -66f, 15f, 42f, -12f, -18f, -15f, 90f, 48f, 45f, -63f, -78f, -57f, 63f, -36f, 84f, 39f, 36f, 75f, -30f, -54f, 3f, 78f, 60f, -39f, 24f, 30f, -21f, 27f, 57f, -81f, -69f, 66f, 54f, -51f, -75f, 0f, 21f, -72f, -27f, -60f, -6f, -3f, 12f, -9f, -33f, 87f, 69f, -48f, 6f, -84f, 72f, 51f, 81f, 9f, 18f, },
-            new float[] { -90f, -66f, 42f, 36f, 24f, 9f, 6f, -18f, -6f, 75f, -15f, 87f, -48f, 54f, -69f, 84f, -21f, 78f, -81f, -30f, -9f, 48f, -24f, -27f, -60f, -42f, -72f, -36f, -78f, 45f, 90f, -54f, -84f, -51f, 57f, -57f, 12f, -33f, -87f, 30f, 33f, -3f, 60f, -39f, 3f, -12f, 0f, -45f, -75f, 81f, 66f, 69f, 72f, 21f, 51f, 39f, 15f, 27f, 18f, 63f, -63f, },
-            new float[] { 33f, 87f, -51f, -18f, -84f, -42f, -39f, 3f, 30f, 39f, 42f, 21f, 66f, 36f, -48f, -12f, 27f, 81f, 57f, -90f, -30f, 60f, 63f, -36f, -60f, -72f, -69f, -54f, -45f, -75f, 24f, -24f, -9f, -33f, -57f, 0f, -15f, -6f, 69f, -78f, -21f, 6f, 54f, 75f, -81f, 45f, 9f, -87f, -66f, 84f, 90f, -3f, -63f, 72f, 51f, 12f, 15f, 48f, 78f, 18f, -27f, },
-            new float[] { -63f, 60f, -39f, -78f, -60f, -15f, -48f, 84f, -3f, -30f, -33f, 54f, 30f, 9f, -12f, -66f, -18f, 33f, -69f, 87f, 36f, -6f, 66f, 48f, 78f, 72f, 45f, -27f, -87f, -45f, 81f, 90f, 18f, 57f, 75f, -36f, 15f, -84f, 12f, -42f, 39f, -9f, -75f, -81f, 51f, -21f, 21f, 69f, 3f, 27f, -54f, -90f, 24f, -51f, 42f, -24f, -57f, 63f, 0f, -72f, 6f, },        };
+            [-27f, -9f, 6f, -42f, 24f, -87f, -12f, 3f, 33f, 30f, 51f, -66f, 12f, -90f, 72f, 87f, -54f, 42f, -15f, -33f, 18f, -30f, 90f, -81f, -3f, -57f, 36f, -45f, 48f, 69f, -51f, 27f, 0f, -6f, -36f, 81f, -84f, 54f, -78f, 84f, -63f, 39f, 60f, -21f, 9f, 57f, 21f, -69f, -75f, -24f, -18f, -39f, 78f, 45f, 15f, 75f, -60f, -48f, 63f, 66f, -72f,],
+            [9f, -87f, 42f, -63f, -54f, -84f, 0f, -39f, -36f, 54f, -69f, -66f, -27f, -33f, -51f, -60f, -90f, -9f, -15f, 75f, -75f, -12f, 66f, -78f, 60f, -6f, -45f, 69f, -3f, 24f, -81f, 63f, 15f, 84f, 27f, 21f, 72f, 81f, 45f, 30f, -57f, -18f, -72f, 87f, 90f, -21f, -30f, 57f, -42f, 18f, 78f, 39f, -48f, 3f, 48f, 33f, -24f, 6f, 36f, 12f, 51f,],
+            [54f, 3f, 6f, -21f, 30f, -75f, -48f, -12f, -81f, -54f, -15f, -9f, -39f, -45f, 18f, 69f, -78f, 9f, -33f, -51f, -69f, -24f, 72f, 33f, -84f, 66f, 21f, 0f, -3f, 36f, 90f, 39f, -63f, 81f, -72f, 84f, -36f, -42f, 63f, 15f, 24f, -57f, -30f, 12f, 48f, 60f, 57f, -87f, 27f, -90f, 51f, -6f, 45f, -66f, 78f, 75f, -60f, -18f, 87f, 42f, -27f,],
+            [39f, 51f, -84f, 12f, 9f, -42f, 42f, 30f, -81f, 27f, -51f, 69f, -78f, 78f, -21f, 24f, 15f, -9f, -27f, 63f, -60f, 72f, -48f, -57f, 48f, -75f, 36f, 66f, -33f, -66f, 57f, 6f, 21f, -36f, 81f, 90f, -30f, -39f, -45f, 3f, 84f, -24f, -6f, 60f, 45f, 87f, -72f, -90f, -54f, 18f, -15f, -87f, 0f, 33f, 75f, -63f, 54f, -18f, -3f, -12f, -69f,],
+            [-51f, -63f, 48f, 18f, 9f, -54f, 33f, -60f, -3f, 36f, 30f, 51f, -33f, 21f, 12f, -45f, 0f, 57f, -24f, -21f, -87f, -69f, -36f, 69f, -81f, 3f, -30f, 27f, -72f, 60f, 81f, 78f, 75f, -6f, 45f, -42f, 42f, 54f, 63f, 84f, 90f, -27f, -66f, -48f, -78f, -15f, -75f, 15f, -57f, 87f, -90f, -12f, 6f, 72f, -84f, -18f, -9f, -39f, 66f, 24f, 39f,],
+            [21f, 84f, 9f, 60f, 78f, 45f, -57f, -81f, 57f, -3f, 3f, 0f, -42f, -75f, -24f, -39f, -36f, -9f, 30f, 75f, 63f, 66f, 48f, 18f, -72f, 87f, -54f, 51f, -51f, 15f, 39f, 36f, -66f, -78f, -12f, 69f, 42f, -15f, -48f, 27f, -30f, 6f, 90f, -90f, 24f, 33f, 12f, 81f, -63f, -21f, -87f, -45f, -84f, -27f, -18f, -60f, 72f, -6f, -69f, 54f, -33f,],
+            [-42f, -45f, -24f, -90f, -87f, 33f, -66f, 15f, 42f, -12f, -18f, -15f, 90f, 48f, 45f, -63f, -78f, -57f, 63f, -36f, 84f, 39f, 36f, 75f, -30f, -54f, 3f, 78f, 60f, -39f, 24f, 30f, -21f, 27f, 57f, -81f, -69f, 66f, 54f, -51f, -75f, 0f, 21f, -72f, -27f, -60f, -6f, -3f, 12f, -9f, -33f, 87f, 69f, -48f, 6f, -84f, 72f, 51f, 81f, 9f, 18f,],
+            [-90f, -66f, 42f, 36f, 24f, 9f, 6f, -18f, -6f, 75f, -15f, 87f, -48f, 54f, -69f, 84f, -21f, 78f, -81f, -30f, -9f, 48f, -24f, -27f, -60f, -42f, -72f, -36f, -78f, 45f, 90f, -54f, -84f, -51f, 57f, -57f, 12f, -33f, -87f, 30f, 33f, -3f, 60f, -39f, 3f, -12f, 0f, -45f, -75f, 81f, 66f, 69f, 72f, 21f, 51f, 39f, 15f, 27f, 18f, 63f, -63f,],
+            [33f, 87f, -51f, -18f, -84f, -42f, -39f, 3f, 30f, 39f, 42f, 21f, 66f, 36f, -48f, -12f, 27f, 81f, 57f, -90f, -30f, 60f, 63f, -36f, -60f, -72f, -69f, -54f, -45f, -75f, 24f, -24f, -9f, -33f, -57f, 0f, -15f, -6f, 69f, -78f, -21f, 6f, 54f, 75f, -81f, 45f, 9f, -87f, -66f, 84f, 90f, -3f, -63f, 72f, 51f, 12f, 15f, 48f, 78f, 18f, -27f,],
+            [-63f, 60f, -39f, -78f, -60f, -15f, -48f, 84f, -3f, -30f, -33f, 54f, 30f, 9f, -12f, -66f, -18f, 33f, -69f, 87f, 36f, -6f, 66f, 48f, 78f, 72f, 45f, -27f, -87f, -45f, 81f, 90f, 18f, 57f, 75f, -36f, 15f, -84f, 12f, -42f, 39f, -9f, -75f, -81f, 51f, -21f, 21f, 69f, 3f, 27f, -54f, -90f, 24f, -51f, 42f, -24f, -57f, 63f, 0f, -72f, 6f,],        };
     }
 
 }

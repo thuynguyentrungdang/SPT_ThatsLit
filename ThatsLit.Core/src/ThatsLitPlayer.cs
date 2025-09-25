@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using Comfort.Common;
 using EFT;
 using EFT.Ballistics;
 using EFT.EnvironmentEffect;
