@@ -329,7 +329,7 @@ namespace ThatsLit
         {
             new SeenCoefPatch().Enable();
             new EncounteringPatch().Enable();
-            //new ExtraVisibleDistancePatch().Enable();
+            new ExtraVisibleDistancePatch().Enable();
             new InitiateShotMonitor().Enable();
             new BlindFirePatch().Enable();
             if (SAINLoaded)

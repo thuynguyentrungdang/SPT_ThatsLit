@@ -78,7 +78,7 @@ namespace ThatsLit
             float rand3 = UnityEngine.Random.Range(0f, 1f);
             float rand4 = UnityEngine.Random.Range(0f, 1f);
             float rand5 = UnityEngine.Random.Range(0f, 1f);
-            
+
             Player.FirearmController botFC = __instance.Owner?.GetPlayer?.HandsController as Player.FirearmController;
             Player.FirearmController playerFC = player.Player?.HandsController as Player.FirearmController;
             Vector3 botVisionDir = __instance.Owner.GetPlayer.LookDirection;
@@ -87,14 +87,14 @@ namespace ThatsLit
             var visionAngleDeltaHorizontalSigned = Vector3.SignedAngle(botVisionDir, eyeToPlayerBody, Vector3.up);
             var visionAngleDeltaHorizontal = Mathf.Abs(visionAngleDeltaHorizontalSigned);
             // negative if looking down (from higher pos), 0 when looking straight...
-            var visionAngleDeltaVertical = Vector3.Angle(new Vector3(eyeToPlayerBody.x, 0, eyeToPlayerBody.z), eyeToPlayerBody); 
-            var visionAngleDeltaVerticalSigned = visionAngleDeltaVertical * (eyeToPlayerBody.y >= 0 ? 1f : -1f); 
+            var visionAngleDeltaVertical = Vector3.Angle(new Vector3(eyeToPlayerBody.x, 0, eyeToPlayerBody.z), eyeToPlayerBody);
+            var visionAngleDeltaVerticalSigned = visionAngleDeltaVertical * (eyeToPlayerBody.y >= 0 ? 1f : -1f);
             var visionAngleDeltaToLast = Vector3.Angle(eyeToLastSeenPos, eyeToPlayerBody);
             if (!__instance.HaveSeen) visionAngleDeltaToLast = 180f;
 
             var sinceSeenFactorSqr = Mathf.Clamp01(sinceSeen / __instance.Owner.Settings.FileSettings.Look.SEC_REPEATED_SEEN);
             var sinceSeenFactorSqrSlow = Mathf.Clamp01(sinceSeen / __instance.Owner.Settings.FileSettings.Look.SEC_REPEATED_SEEN * 2f);
-            var seenPosDeltaFactorSqr = Mathf.Clamp01((float) (lastSeenPosDelta / __instance.Owner.Settings.FileSettings.Look.DIST_REPEATED_SEEN / 4f));
+            var seenPosDeltaFactorSqr = Mathf.Clamp01((float)(lastSeenPosDelta / __instance.Owner.Settings.FileSettings.Look.DIST_REPEATED_SEEN / 4f));
             seenPosDeltaFactorSqr = Mathf.Lerp(seenPosDeltaFactorSqr, 0, Mathf.InverseLerp(45f, 0f, visionAngleDeltaToLast));
             sinceSeenFactorSqr = sinceSeenFactorSqr * sinceSeenFactorSqr;
             sinceSeenFactorSqrSlow = sinceSeenFactorSqrSlow * sinceSeenFactorSqrSlow;
@@ -120,15 +120,15 @@ namespace ThatsLit
             ThatsLitCompat.ScopeTemplate activeScope = null;
             BotNightVisionData nightVision = __instance.Owner.NightVision;
             ThatsLitCompat.GoggleTemplate activeGoggle = null;
-            if (nightVision?.UsingNow == true) 
+            if (nightVision?.UsingNow == true)
                 if (ThatsLitCompat.Goggles.TryGetValue(nightVision.NightVisionItem.Item.TemplateId, out var goggle))
                     activeGoggle = goggle?.TemplateInstance;
-            if (activeGoggle != null) 
+            if (activeGoggle != null)
             {
                 if (nightVision.NightVisionItem?.Template?.Mask == NightVisionComponent.EMask.Thermal
                  && activeGoggle.thermal != null
                  && activeGoggle.thermal.effectiveDistance > dis)
-                 {
+                {
                     if (activeGoggle.thermal.verticalFOV > visionAngleDeltaVertical
                      && activeGoggle.thermal.horizontalFOV > visionAngleDeltaHorizontal)
                     {
@@ -138,7 +138,7 @@ namespace ThatsLit
                     {
                         gearBlocking = true;
                     }
-                 }
+                }
                 else if (nightVision.NightVisionItem?.Template?.Mask != NightVisionComponent.EMask.Thermal
                       && activeGoggle.nightVision != null)
                 {
@@ -159,7 +159,8 @@ namespace ThatsLit
                 if (sightMod != null)
                     if (ThatsLitCompat.Scopes.TryGetValue(sightMod.Item.TemplateId, out var scope))
                         activeScope = scope?.TemplateInstance;
-                if (activeScope != null) {
+                if (activeScope != null)
+                {
                     if (rand1 < 0.1f) sightMod.SetScopeMode(UnityEngine.Random.Range(0, sightMod.ScopesCount), UnityEngine.Random.Range(0, 2));
                     float currentZoom = sightMod.GetCurrentOpticZoom();
                     if (currentZoom == 0) currentZoom = 1;
@@ -168,7 +169,7 @@ namespace ThatsLit
                     {
                         disFactor = Mathf.InverseLerp(10, 110f, dis / currentZoom);
                         zoomedDis /= currentZoom;
-                        if (activeScope?.thermal != null  && dis <= activeScope.thermal.effectiveDistance)
+                        if (activeScope?.thermal != null && dis <= activeScope.thermal.effectiveDistance)
                         {
                             inThermalView = true;
                         }
@@ -189,7 +190,7 @@ namespace ThatsLit
                                                    // Once player is seen, it should be suppressed unless the player is out fo visual for sometime, to prevent interrupting long range fight
                 float t = sinceSeen / (8f * (1.2f - disFactor)) / (0.33f + 0.67f * seenPosDeltaFactorSqr * sinceSeenFactorSqr);
                 disFactor = Mathf.Lerp(0, disFactor, t); // Takes 1.6 seconds out of visual for the disFactor to reset for AIs at 110m away, 9.6s for 10m, 8.32s for 50m, if it's targeting the player, 3x the time
-                                                                                                                          // disFactorLong = Mathf.Lerp(0, disFactorLong, sinceSeen / (8f * (1.2f - disFactorLong)) / (isGoalEnemy ? 0.33f : 1f)); // Takes 1.6 seconds out of visual for the disFactor to reset for AIs at 110m away, 9.6s for 10m, 8.32s for 50m, if it's targeting the player, 3x the time
+                                                         // disFactorLong = Mathf.Lerp(0, disFactorLong, sinceSeen / (8f * (1.2f - disFactorLong)) / (isGoalEnemy ? 0.33f : 1f)); // Takes 1.6 seconds out of visual for the disFactor to reset for AIs at 110m away, 9.6s for 10m, 8.32s for 50m, if it's targeting the player, 3x the time
                 disFactorSmooth = Mathf.Lerp(0, disFactorSmooth, t);
             }
 
@@ -297,7 +298,7 @@ namespace ThatsLit
                 player.DebugInfo.lastGlobalOverlookChance = globalOverlookChance;
                 player.DebugInfo.nearestOffset = eyeToPlayerBody;
             }
-            globalOverlookChance *= botImpactType != BotImpactType.DEFAULT? 0.5f : 1f;
+            globalOverlookChance *= botImpactType != BotImpactType.DEFAULT ? 0.5f : 1f;
             if (rand5 < globalOverlookChance)
             {
                 __result *= 10 + rand1 * 10; // Instead of set it to flat 8888, so if the player has been in the vision for quite some time, this don't block
@@ -347,10 +348,10 @@ namespace ThatsLit
                 if (inNVGView) // IR lights are not accounted in the score, process the score for each bot here
                 {
                     float compensation = 0;
-                    if (player.LightAndLaserState.IRLight)          compensation = Mathf.Clamp(0.4f - score, 0, 2) * player.LightAndLaserState.deviceStateCache.irLight;
-                    else if (player.LightAndLaserState.IRLaser)     compensation = Mathf.Clamp(0.2f - score, 0, 2) * player.LightAndLaserState.deviceStateCache.irLaser;
-                    else if (player.LightAndLaserState.IRLightSub)  compensation = Mathf.Clamp(0f - score, 0, 2) * player.LightAndLaserState.deviceStateCacheSub.irLight;
-                    else if (player.LightAndLaserState.IRLaserSub)  compensation = Mathf.Clamp(0f - score, 0, 2) * player.LightAndLaserState.deviceStateCacheSub.irLaser;
+                    if (player.LightAndLaserState.IRLight) compensation = Mathf.Clamp(0.4f - score, 0, 2) * player.LightAndLaserState.deviceStateCache.irLight;
+                    else if (player.LightAndLaserState.IRLaser) compensation = Mathf.Clamp(0.2f - score, 0, 2) * player.LightAndLaserState.deviceStateCache.irLaser;
+                    else if (player.LightAndLaserState.IRLightSub) compensation = Mathf.Clamp(0f - score, 0, 2) * player.LightAndLaserState.deviceStateCacheSub.irLight;
+                    else if (player.LightAndLaserState.IRLaserSub) compensation = Mathf.Clamp(0f - score, 0, 2) * player.LightAndLaserState.deviceStateCacheSub.irLaser;
                     score += compensation * Mathf.InverseLerp(0f, -1f, score);
                 }
 
@@ -378,7 +379,8 @@ namespace ThatsLit
                 Vector2 bestMatchFoliageDir = Vector2.zero;
                 float bestMatchDeg = 360f;
                 float bestMatchDis = 0;
-                for (int i = 0; i < Math.Min(ThatsLitPlugin.FoliageSamples.Value, player.Foliage.FoliageCount); i++) {
+                for (int i = 0; i < Math.Min(ThatsLitPlugin.FoliageSamples.Value, player.Foliage.FoliageCount); i++)
+                {
                     var f = player.Foliage.Foliage[i];
                     if (f == default) break;
                     var fDeg = Vector2.Angle(new Vector2(-eyeToPlayerBody.x, -eyeToPlayerBody.z), f.dir);
@@ -393,7 +395,7 @@ namespace ThatsLit
                 foliageImpact *= 1 + Mathf.InverseLerp(0f, -1f, factor);
                 if (bestMatchFoliageDir != Vector2.zero)
                     foliageImpact *= Mathf.InverseLerp(90f, 0f, bestMatchDeg);
-                                                                                                                // Maybe randomly lose vision for foliages
+                // Maybe randomly lose vision for foliages
                 float foliageBlindChance = Mathf.Clamp01(
                                                 disFactor // Mainly works for far away enemies
                                                 * foliageImpact
@@ -466,7 +468,7 @@ namespace ThatsLit
                         if (player.DebugInfo != null && nearestAI)
                         {
                             if (layingVerticaltInVisionFactor >= 90f) player.DebugInfo.lastTiltAngle = (180f - layingVerticaltInVisionFactor);
-                            else if (layingVerticaltInVisionFactor <= 0)  player.DebugInfo.lastTiltAngle = layingVerticaltInVisionFactor;
+                            else if (layingVerticaltInVisionFactor <= 0) player.DebugInfo.lastTiltAngle = layingVerticaltInVisionFactor;
                         }
 #endif
 
@@ -551,7 +553,7 @@ namespace ThatsLit
             /// Overlook when the bot has no idea the player is nearby and the player is sitting inside a bush
             if (ThatsLitPlugin.EnabledBushRatting.Value
              && !inThermalView && player.Foliage != null && botImpactType != BotImpactType.BOSS
-             && (!__instance.HaveSeen || lastSeenPosDelta > 30f + rand1 * 20f || sinceSeen > 150f + 150f*rand3 && lastSeenPosDelta > 10f + 10f*rand2))
+             && (!__instance.HaveSeen || lastSeenPosDelta > 30f + rand1 * 20f || sinceSeen > 150f + 150f * rand3 && lastSeenPosDelta > 10f + 10f * rand2))
             {
                 float angleFactor = 0, foliageDisFactor = 0, poseScale = 0, enemyDisFactor = 0, yDeltaFactor = 1;
                 bool bushRat = true;
@@ -560,85 +562,85 @@ namespace ThatsLit
                 switch (nearestFoliage.name)
                 {
                     case "filbert_big01":
-                        angleFactor             = 1; // works even if looking right at
-                        foliageDisFactor        = Mathf.InverseLerp(1.5f, 0.8f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.InverseLerp(2.5f, 0f, dis);
-                        poseScale               = Mathf.InverseLerp(1f, 0.45f, pPoseFactor);
-                        yDeltaFactor            = Mathf.InverseLerp(-60f, 0f, visionAngleDeltaVerticalSigned);
+                        angleFactor = 1; // works even if looking right at
+                        foliageDisFactor = Mathf.InverseLerp(1.5f, 0.8f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.InverseLerp(2.5f, 0f, dis);
+                        poseScale = Mathf.InverseLerp(1f, 0.45f, pPoseFactor);
+                        yDeltaFactor = Mathf.InverseLerp(-60f, 0f, visionAngleDeltaVerticalSigned);
                         break;
                     case "filbert_big02":
-                        angleFactor             = 0.4f + 0.6f * Mathf.InverseLerp(0, 20, visionAngleDelta);
-                        foliageDisFactor        = Mathf.InverseLerp(0.1f, 0.6f, nearestFoliage.dis); // 0.3 -> 100%, 0.55 -> 0%
-                        enemyDisFactor          = Mathf.InverseLerp(0, 10f, dis);
-                        poseScale               = pPoseFactor == 0.05f ? 0.7f : 1f; //
+                        angleFactor = 0.4f + 0.6f * Mathf.InverseLerp(0, 20, visionAngleDelta);
+                        foliageDisFactor = Mathf.InverseLerp(0.1f, 0.6f, nearestFoliage.dis); // 0.3 -> 100%, 0.55 -> 0%
+                        enemyDisFactor = Mathf.InverseLerp(0, 10f, dis);
+                        poseScale = pPoseFactor == 0.05f ? 0.7f : 1f; //
                         break;
                     case "filbert_big03":
-                        angleFactor             = 0.4f + 0.6f * Mathf.InverseLerp(0, 30, visionAngleDelta);
-                        foliageDisFactor        = Mathf.InverseLerp(0.45f, 0.2f, nearestFoliage.dis); // 0.3 -> 100%, 0.55 -> 0%
-                        enemyDisFactor          = Mathf.InverseLerp(0, 15f, dis);
-                        poseScale               = pPoseFactor == 0.05f ? 0 : 0.1f + 0.9f * Mathf.InverseLerp(0.45f, 1f, pPoseFactor); // standing is better with this tall one
+                        angleFactor = 0.4f + 0.6f * Mathf.InverseLerp(0, 30, visionAngleDelta);
+                        foliageDisFactor = Mathf.InverseLerp(0.45f, 0.2f, nearestFoliage.dis); // 0.3 -> 100%, 0.55 -> 0%
+                        enemyDisFactor = Mathf.InverseLerp(0, 15f, dis);
+                        poseScale = pPoseFactor == 0.05f ? 0 : 0.1f + 0.9f * Mathf.InverseLerp(0.45f, 1f, pPoseFactor); // standing is better with this tall one
                         break;
                     case "filbert_01":
-                        angleFactor             = 1;
-                        foliageDisFactor        = Mathf.InverseLerp(0.6f, 0.25f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.InverseLerp(0f, 12f, dis); Mathf.Clamp01(dis / 12f); // 100% at 2.5m+
-                        poseScale               = Mathf.InverseLerp(0.75f, 0.3f, pPoseFactor);
+                        angleFactor = 1;
+                        foliageDisFactor = Mathf.InverseLerp(0.6f, 0.25f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.InverseLerp(0f, 12f, dis); Mathf.Clamp01(dis / 12f); // 100% at 2.5m+
+                        poseScale = Mathf.InverseLerp(0.75f, 0.3f, pPoseFactor);
                         break;
                     case "filbert_small01":
-                        angleFactor             = 0.2f + 0.8f * Mathf.InverseLerp(0f, 35f, visionAngleDelta);
-                        foliageDisFactor        = Mathf.InverseLerp(0.3f, 0.15f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.InverseLerp(0f, 10f, dis);
-                        poseScale               = pPoseFactor == 0.45f ? 1f : 0;
+                        angleFactor = 0.2f + 0.8f * Mathf.InverseLerp(0f, 35f, visionAngleDelta);
+                        foliageDisFactor = Mathf.InverseLerp(0.3f, 0.15f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.InverseLerp(0f, 10f, dis);
+                        poseScale = pPoseFactor == 0.45f ? 1f : 0;
                         break;
                     case "filbert_small02":
-                        angleFactor             = 0.2f + 0.8f * Mathf.InverseLerp(0f, 25f, visionAngleDelta);
-                        foliageDisFactor        = Mathf.InverseLerp(0.3f, 0.15f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.InverseLerp(0f, 8f, dis);
-                        poseScale               = pPoseFactor == 0.45f ? 1f : 0;
+                        angleFactor = 0.2f + 0.8f * Mathf.InverseLerp(0f, 25f, visionAngleDelta);
+                        foliageDisFactor = Mathf.InverseLerp(0.3f, 0.15f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.InverseLerp(0f, 8f, dis);
+                        poseScale = pPoseFactor == 0.45f ? 1f : 0;
                         break;
                     case "filbert_small03":
-                        angleFactor             = 0.2f + 0.8f * Mathf.InverseLerp(0f, 40f, visionAngleDelta);
-                        foliageDisFactor        = Mathf.InverseLerp(1f, 0.25f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.InverseLerp(0f, 10f, dis);
-                        poseScale               = pPoseFactor == 0.45f ? 1f : 0;
+                        angleFactor = 0.2f + 0.8f * Mathf.InverseLerp(0f, 40f, visionAngleDelta);
+                        foliageDisFactor = Mathf.InverseLerp(1f, 0.25f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.InverseLerp(0f, 10f, dis);
+                        poseScale = pPoseFactor == 0.45f ? 1f : 0;
                         break;
                     case "filbert_dry03":
-                        angleFactor             = 0.4f + 0.6f * Mathf.InverseLerp(0f, 30f, visionAngleDelta);
-                        foliageDisFactor        = Mathf.InverseLerp(0.8f, 0.5f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.InverseLerp(0f, 30f, dis);
-                        poseScale               = pPoseFactor == 0.05f ? 0 : 0.1f + Mathf.InverseLerp(0.45f, 1f, pPoseFactor) * 0.9f;
+                        angleFactor = 0.4f + 0.6f * Mathf.InverseLerp(0f, 30f, visionAngleDelta);
+                        foliageDisFactor = Mathf.InverseLerp(0.8f, 0.5f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.InverseLerp(0f, 30f, dis);
+                        poseScale = pPoseFactor == 0.05f ? 0 : 0.1f + Mathf.InverseLerp(0.45f, 1f, pPoseFactor) * 0.9f;
                         break;
                     case "fibert_hedge01":
-                        angleFactor             = Mathf.InverseLerp(0f, 40f, visionAngleDelta);
-                        foliageDisFactor        = Mathf.InverseLerp(0.2f, 0.1f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.Clamp01(dis / 30f);
-                        poseScale               = pPoseFactor == 0.45f ? 1f : 0; // Too narrow for proning
+                        angleFactor = Mathf.InverseLerp(0f, 40f, visionAngleDelta);
+                        foliageDisFactor = Mathf.InverseLerp(0.2f, 0.1f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.Clamp01(dis / 30f);
+                        poseScale = pPoseFactor == 0.45f ? 1f : 0; // Too narrow for proning
                         break;
                     case "fibert_hedge02":
-                        angleFactor             = 0.2f + 0.8f * Mathf.InverseLerp(0f, 40f, visionAngleDelta);
-                        foliageDisFactor        = Mathf.InverseLerp(0.3f, 0.1f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.InverseLerp(0f, 20f, dis);
-                        poseScale               = pPoseFactor == 0.45f ? 1f : 0; // Too narrow for proning
+                        angleFactor = 0.2f + 0.8f * Mathf.InverseLerp(0f, 40f, visionAngleDelta);
+                        foliageDisFactor = Mathf.InverseLerp(0.3f, 0.1f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.InverseLerp(0f, 20f, dis);
+                        poseScale = pPoseFactor == 0.45f ? 1f : 0; // Too narrow for proning
                         break;
                     case "privet_hedge":
                     case "privet_hedge_2":
-                        angleFactor             = Mathf.InverseLerp(30f, 90f, visionAngleDelta);
-                        foliageDisFactor        = Mathf.InverseLerp(1f, 0f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.InverseLerp(0f, 50f, dis);
-                        poseScale               = pPoseFactor < 0.45f ? 1f : 0; // Prone only
+                        angleFactor = Mathf.InverseLerp(30f, 90f, visionAngleDelta);
+                        foliageDisFactor = Mathf.InverseLerp(1f, 0f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.InverseLerp(0f, 50f, dis);
+                        poseScale = pPoseFactor < 0.45f ? 1f : 0; // Prone only
                         break;
                     case "bush_dry01":
-                        angleFactor             = 0.2f + 0.8f * Mathf.InverseLerp(0f, 35f, visionAngleDelta);
-                        foliageDisFactor        = Mathf.InverseLerp(0.3f, 0.15f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.InverseLerp(0f, 25f, dis);
-                        poseScale               = pPoseFactor == 0.45f ? 1f : 0;
+                        angleFactor = 0.2f + 0.8f * Mathf.InverseLerp(0f, 35f, visionAngleDelta);
+                        foliageDisFactor = Mathf.InverseLerp(0.3f, 0.15f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.InverseLerp(0f, 25f, dis);
+                        poseScale = pPoseFactor == 0.45f ? 1f : 0;
                         break;
                     case "bush_dry02":
-                        angleFactor             = 1;
-                        foliageDisFactor        = Mathf.InverseLerp(1.5f, 1f, nearestFoliage.dis);
-                        enemyDisFactor          = Mathf.InverseLerp(0f, 15f, dis);
-                        poseScale               = Mathf.InverseLerp(0.55f, 0.45f, pPoseFactor);
-                        yDeltaFactor            = Mathf.InverseLerp(60f, 0f, -visionAngleDeltaVerticalSigned); // +60deg => 1, -60deg (looking down) => 0 (this flat bush is not effective against AIs up high)
+                        angleFactor = 1;
+                        foliageDisFactor = Mathf.InverseLerp(1.5f, 1f, nearestFoliage.dis);
+                        enemyDisFactor = Mathf.InverseLerp(0f, 15f, dis);
+                        poseScale = Mathf.InverseLerp(0.55f, 0.45f, pPoseFactor);
+                        yDeltaFactor = Mathf.InverseLerp(60f, 0f, -visionAngleDeltaVerticalSigned); // +60deg => 1, -60deg (looking down) => 0 (this flat bush is not effective against AIs up high)
                         break;
                     case "bush_dry03":
                         angleFactor = 0.4f + 0.6f * Mathf.Clamp01(visionAngleDelta / 20f);
@@ -754,7 +756,7 @@ namespace ThatsLit
                 // f-0.1 => -0.005~-0.01, factor: -0.2 => -0.02~-0.04, factor: -0.5 => -0.125~-0.25, factor: -1 => 0 ~ -0.5 (1m), -0.5 ~ -1 (10m)
                 var secondsOffset = -1f * Mathf.Pow(factor, 2) * Mathf.Sign(factor) * (UnityEngine.Random.Range(0.5f, 1f) - 0.5f * cqb11mTo1mSquared); // 1 => -1x, -1 => 1x
                 secondsOffset += (original * (10f + rand1 * 20f) * (0.1f + 0.9f * sinceSeenFactorSqr * seenPosDeltaFactorSqr) * extremeDarkFactor) / pPoseFactor; // Makes night factory makes sense (filtered by extremeDarkFactor)
-                secondsOffset *= botImpactType == BotImpactType.DEFAULT? 1f : 0.5f;
+                secondsOffset *= botImpactType == BotImpactType.DEFAULT ? 1f : 0.5f;
                 secondsOffset *= secondsOffset > 0 ? ThatsLitPlugin.DarknessImpactScale : ThatsLitPlugin.BrightnessImpactScale;
                 __result += secondsOffset;
                 if (__result < 0) __result = 0;
@@ -785,7 +787,7 @@ namespace ThatsLit
                     }
                     else
                     {
-                        var scale = factor * factor * 0.5f + 0.5f* Mathf.Abs(factor * factor * factor);
+                        var scale = factor * factor * 0.5f + 0.5f * Mathf.Abs(factor * factor * factor);
                         scale *= 3f;
                         scale *= ThatsLitPlugin.DarknessImpactScale;
                         scale *= 1f - combinedCqb10x5To1;
@@ -794,7 +796,7 @@ namespace ThatsLit
                         // -0.2 => 0.072
 
                         scale *= 0.7f + 0.3f * notSeenRecentAndNear;
-                        __result *= 1f+scale;
+                        __result *= 1f + scale;
                     }
 
                 }
@@ -820,7 +822,7 @@ namespace ThatsLit
                 __result += (0.5f - __result)
                             * (rand1 * Mathf.Clamp01(visionAngleDelta / 90f)) // Scale-capped by horizontal vision angle delta
                             * (rand3 * Mathf.Clamp01(lastSeenPosDelta / 5f)) // Scale-capped by player position delta to last
-                            * (__instance.Owner.Mover.Sprinting? 1f : 0.75f); 
+                            * (__instance.Owner.Mover.Sprinting ? 1f : 0.75f);
             }
 
             if (ThatsLitPlugin.EnableMovementImpact.Value)
@@ -893,14 +895,14 @@ namespace ThatsLit
             {
                 // Simulated Free Look
                 float sin = 0.75f * Mathf.Sin(Time.time / ((float)(1f + caution))) + 0.25f * Mathf.Sin(Time.time);
-                int focusLUTIndex = (int) ((Time.time + sin * 0.5f) / (float)(3f + caution / 5f));
+                int focusLUTIndex = (int)((Time.time + sin * 0.5f) / (float)(3f + caution / 5f));
                 focusLUTIndex %= 61;
                 Vector3 simFreeLookDir = botVisionDir;
                 var lutLookup1 = focusLUTs[caution][focusLUTIndex];
                 lutLookup1 += (20f - caution) * sin;
                 lutLookup1 = Mathf.Clamp(lutLookup1, -90f, 90f);
                 var lutLookup2 = focusLUTs[(caution + focusLUTIndex) % 10][focusLUTIndex];
-                lutLookup2  = Mathf.Abs(lutLookup2 / 2f);
+                lutLookup2 = Mathf.Abs(lutLookup2 / 2f);
                 lutLookup2 = Mathf.Clamp(lutLookup2, 0, 45f);
                 simFreeLookDir = simFreeLookDir.RotateAroundPivot(Vector3.up, new Vector3(0f, lutLookup1));
                 simFreeLookDir = simFreeLookDir.RotateAroundPivot(Vector3.Cross(Vector3.up, botVisionDir), new Vector3(0f, -lutLookup2));
@@ -928,8 +930,8 @@ namespace ThatsLit
                 }
             }
 
-            __result = Mathf.Lerp(__result, original, botImpactType == BotImpactType.DEFAULT? 0f : 0.5f);
-            
+            __result = Mathf.Lerp(__result, original, botImpactType == BotImpactType.DEFAULT ? 0f : 0.5f);
+
 
             if (ShouldLogSeenCoef())
             {
@@ -1034,7 +1036,7 @@ namespace ThatsLit
                 player.DebugInfo.calced++;
                 player.DebugInfo.calcedLastFrame++;
             }
-            
+
             ThatsLitPlugin.swSeenCoef.Stop();
 
             bool ShouldLogSeenCoef()
