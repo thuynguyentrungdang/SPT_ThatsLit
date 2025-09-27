@@ -185,9 +185,9 @@ namespace ThatsLit
                 // To scale down various sneaking bonus
                 // The bigger the distance the bigger it is, capped to 110m
                 disFactorSmooth = (disFactor + disFactor * disFactor) * 0.5f; // 0.25df => 0.156dfs / 0.5df => 0.325dfs / 0.75df => 0.656dfs
-                disFactor = disFactor * disFactor; // A slow accelerating curve, 110m => 1, 10m => 0, 50m => 0.16
-                                                   // The disFactor is to scale up effectiveness of various mechanics by distance
-                                                   // Once player is seen, it should be suppressed unless the player is out fo visual for sometime, to prevent interrupting long range fight
+                disFactor *= disFactor; // A slow accelerating curve, 110m => 1, 10m => 0, 50m => 0.16
+                                        // The disFactor is to scale up effectiveness of various mechanics by distance
+                                        // Once player is seen, it should be suppressed unless the player is out fo visual for sometime, to prevent interrupting long range fight
                 float t = sinceSeen / (8f * (1.2f - disFactor)) / (0.33f + 0.67f * seenPosDeltaFactorSqr * sinceSeenFactorSqr);
                 disFactor = Mathf.Lerp(0, disFactor, t); // Takes 1.6 seconds out of visual for the disFactor to reset for AIs at 110m away, 9.6s for 10m, 8.32s for 50m, if it's targeting the player, 3x the time
                                                          // disFactorLong = Mathf.Lerp(0, disFactorLong, sinceSeen / (8f * (1.2f - disFactorLong)) / (isGoalEnemy ? 0.33f : 1f)); // Takes 1.6 seconds out of visual for the disFactor to reset for AIs at 110m away, 9.6s for 10m, 8.32s for 50m, if it's targeting the player, 3x the time
@@ -195,17 +195,32 @@ namespace ThatsLit
             }
 
             var canSeeLight = player.LightAndLaserState.VisibleLight;
-            if (!canSeeLight && inNVGView && player.LightAndLaserState.IRLight) canSeeLight = true;
+            if (!canSeeLight && inNVGView && player.LightAndLaserState.IRLight)
+                canSeeLight = true;
+
             var canSeeLightSub = player.LightAndLaserState.VisibleLightSub;
-            if (!canSeeLightSub && inNVGView && player.LightAndLaserState.IRLightSub) canSeeLightSub = true;
+            if (!canSeeLightSub && inNVGView && player.LightAndLaserState.IRLightSub)
+                canSeeLightSub = true;
+
             var canSeeLaser = player.LightAndLaserState.VisibleLaser;
-            if (!canSeeLaser && inNVGView && player.LightAndLaserState.IRLaser) canSeeLaser = true;
+            if (!canSeeLaser && inNVGView && player.LightAndLaserState.IRLaser)
+                canSeeLaser = true;
+
             var canSeeLaserSub = player.LightAndLaserState.VisibleLaserSub;
-            if (!canSeeLaserSub && inNVGView && player.LightAndLaserState.IRLaserSub) canSeeLaserSub = true;
-            if (visionAngleDelta > 110) canSeeLight = false;
-            if (visionAngleDelta > 85) canSeeLaser = false;
-            if (visionAngleDelta > 110) canSeeLightSub = false;
-            if (visionAngleDelta > 85) canSeeLaserSub = false;
+            if (!canSeeLaserSub && inNVGView && player.LightAndLaserState.IRLaserSub)
+                canSeeLaserSub = true;
+
+            if (visionAngleDelta > 110)
+            {
+                canSeeLight = false;
+                canSeeLightSub = false;
+            }
+
+            if (visionAngleDelta > 85)
+            {
+                canSeeLaser = false;
+                canSeeLaserSub = false;
+            }
 
             bool nearestAI = false;
             if (player.lastNearest == null || Vector3.Distance(player.Player.Position, player.lastNearest?.Position ?? Vector3.zero) > dis)
@@ -218,6 +233,7 @@ namespace ThatsLit
                     player.lastNearest = __instance.Owner;
                 }
             }
+
             nearestAI = player.lastNearest == __instance.Owner;
             if (ShouldLogSeenCoef())
             {
@@ -759,8 +775,9 @@ namespace ThatsLit
                 secondsOffset *= botImpactType == BotImpactType.DEFAULT ? 1f : 0.5f;
                 secondsOffset *= secondsOffset > 0 ? ThatsLitPlugin.DarknessImpactScale : ThatsLitPlugin.BrightnessImpactScale;
                 __result += secondsOffset;
-                if (__result < 0) __result = 0;
 
+                if (__result < 0)
+                    __result = 0;
 
                 // The scaling here allows the player to stay in the dark without being seen
                 // The reason why scaling is needed is because SeenCoef will change dramatically depends on vision angles

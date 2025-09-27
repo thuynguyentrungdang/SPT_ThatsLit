@@ -139,11 +139,13 @@ namespace ThatsLit
             if (rt == null)
             {
                 // rt = new RenderTexture(RESOLUTION, RESOLUTION, 0, RenderTextureFormat.ARGB32);
-                rt = new CustomRenderTexture(RESOLUTION, RESOLUTION, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);
-                rt.depth = 0;
-                rt.doubleBuffered = true;
-                rt.useMipMap = false;
-                rt.filterMode = FilterMode.Point;
+                rt = new CustomRenderTexture(RESOLUTION, RESOLUTION, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default)
+                {
+                    depth = 0,
+                    doubleBuffered = true,
+                    useMipMap = false,
+                    filterMode = FilterMode.Point
+                };
                 rt.Create();
             }
 
@@ -486,40 +488,6 @@ namespace ThatsLit
                 else ambienceShadownRating -= 25f * Time.deltaTime;
                 ambienceShadownRating = Mathf.Clamp(ambienceShadownRating, 0, 10f);
             }
-
-            // if (ThatsLitPlugin.DebugTexture.Value && envCam)
-            // {
-            //     envCam.transform.localPosition = envCamOffset;
-            //     switch (camPos)
-            //     {
-            //         case 0:
-            //             {
-            //                 envCam.transform.LookAt(bodyPos + Vector3.left * 25);
-            //                 break;
-            //             }
-            //         case 1:
-            //             {
-            //                 envCam.transform.LookAt(bodyPos + Vector3.right * 25);
-            //                 break;
-            //             }
-            //         case 2:
-            //             {
-            //                 envCam.transform.localPosition = envCamOffset;
-            //                 envCam.transform.LookAt(bodyPos + Vector3.down * 10);
-            //                 break;
-            //             }
-            //         case 3:
-            //             {
-            //                 envCam.transform.LookAt(bodyPos + Vector3.back * 25);
-            //                 break;
-            //             }
-            //         case 4:
-            //             {
-            //                 envCam.transform.LookAt(bodyPos + Vector3.right * 25);
-            //                 break;
-            //             }
-            //     }
-            // }
 
             ThatsLitPlugin.swUpdate.Stop();
         }

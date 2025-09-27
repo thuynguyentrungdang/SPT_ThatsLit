@@ -8,13 +8,12 @@ using Fika.Core.Modding.Events;
 using Fika.Core.Networking;
 using Fika.Core.Modding;
 using Fika.Core.Coop.Players;
-using LiteNetLib;
-using Comfort.Common;
-using LiteNetLib.Utils;
-using System.Collections.Generic;
-using EFT;
 using Fika.Core.Coop.Utils;
 using Fika.Core.Coop.GameMode;
+using LiteNetLib;
+using Comfort.Common;
+using System.Collections.Generic;
+using EFT;
 
 namespace ThatsLit.Sync
 {
